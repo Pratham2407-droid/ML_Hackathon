@@ -142,6 +142,7 @@ class Trip:
         ranks = np.arange(len(route))
         for row, point in enumerate(self.xy):
             distance, _ = self.project(point, route)
+            # Prefix maxima restrict predecessors to the same or an earlier route position.
             adjusted = previous - 0.5 * ranks
             maxima = np.maximum.accumulate(adjusted)
             back[row] = np.maximum.accumulate(np.where(adjusted == maxima, ranks, 0))
@@ -188,6 +189,7 @@ class Trip:
             dt = self.track[row, 2] - self.track[row - 1, 2]
             observed = np.linalg.norm(self.xy[row] - self.xy[row - 1])
             if dt > settings["gap_seconds"]:
+                # Treat all candidate pairs equally across a long gap.
                 transition = np.zeros((len(before), len(after)))
             else:
                 between = np.array([
@@ -196,6 +198,7 @@ class Trip:
                 ])
                 left = features[row - 1, :, -1]
                 right = features[row, :, -1]
+                # Include the partial arcs from and to the projected GPS positions.
                 route_length = (
                     between + ((1 - left) * self.length[before])[:, None]
                     + (right * self.length[after])[None, :]
@@ -208,6 +211,7 @@ class Trip:
                     -np.abs(route_length - observed) / settings["transition_scale_m"],
                     -settings["disconnect_penalty"],
                 )
+            # Rows are predecessor candidates and columns are current candidates.
             joint = score[:, None] + transition
             back[row] = joint.argmax(axis=0)
             score = emissions[row] + joint.max(axis=0)
