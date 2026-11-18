@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.smoke/
+data/
+Student folder.zip
+pathsnap-source.zip
+PathSnap-backend.zip
+.ipynb_checkpoints/
