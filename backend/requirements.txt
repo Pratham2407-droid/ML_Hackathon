@@ -5,3 +5,4 @@ numpy
 scipy
 scikit-learn==1.9.1
 threadpoolctl
+xgboost==3.2.0

@@ -19,9 +19,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, log_loss, precision_score, recall_score
 from sklearn.model_selection import GroupKFold
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from threadpoolctl import threadpool_limits
+from xgboost import XGBClassifier
 
 from pathsnap.core import DECODER, FEATURES, TripStore
 
@@ -82,6 +84,14 @@ def models():
         "random_forest": RandomForestClassifier(n_estimators=60, max_depth=12, n_jobs=2, random_state=SEED),
         "extra_trees": ExtraTreesClassifier(n_estimators=60, max_depth=14, n_jobs=2, random_state=SEED),
         "hist_gradient_boosting": HistGradientBoostingClassifier(max_iter=100, random_state=SEED),
+        "mlp": make_pipeline(
+            StandardScaler(),
+            MLPClassifier(hidden_layer_sizes=(32, 16), max_iter=40, random_state=SEED),
+        ),
+        "xgboost": XGBClassifier(
+            n_estimators=100, max_depth=6, learning_rate=0.1,
+            tree_method="hist", device="cpu", n_jobs=2, random_state=SEED,
+        ),
     }
 
 
@@ -170,6 +180,8 @@ def bayesian_search(model, x, y, folds, trials):
         RandomForestClassifier: ("max_depth", [6, 10, 14, 18], "min_samples_leaf", [1, 5, 15]),
         ExtraTreesClassifier: ("max_depth", [6, 10, 14, 18], "min_samples_leaf", [1, 5, 15]),
         HistGradientBoostingClassifier: ("max_leaf_nodes", [7, 15, 31, 63], "learning_rate", [0.035, 0.07, 0.14]),
+        MLPClassifier: ("mlpclassifier__hidden_layer_sizes", [(16,), (32, 16), (64, 32)], "mlpclassifier__alpha", [0.0001, 0.001, 0.01]),
+        XGBClassifier: ("max_depth", [3, 5, 7, 9], "learning_rate", [0.035, 0.07, 0.14]),
     }
     kind = type(model.steps[-1][1]) if hasattr(model, "steps") else type(model)
     first, values_a, second, values_b = spaces[kind]
@@ -234,7 +246,8 @@ def main():
             records[name] = {
                 "parameters": {
                     key: value for key, value in model.get_params().items()
-                    if isinstance(value, (str, bool, int, float, type(None)))
+                    if isinstance(value, (str, bool, int, float, tuple, type(None)))
+                    and (not isinstance(value, float) or np.isfinite(value))
                 },
                 "fold_macro_f1": scores,
                 "mean_cv_macro_f1": float(np.mean(scores)),
