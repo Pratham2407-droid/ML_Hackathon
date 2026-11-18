@@ -1,5 +1,11 @@
 # Frontend verification — 18 November 2026
 
+## Final-model integration check
+
+The exported Colab model passed live FastAPI predictions for all ten student-test trips on Windows. The browser dashboard connected to the real API and switched between `00000000` and `00000052`. Its displayed accuracy matched the responses at 95.2% and 98.5%. The route and GPS layer counts matched both responses, and the backend logged successful POST requests for both trips.
+
+This check ran on one laptop over localhost. The second-laptop LAN check and reserved evaluation predictions are part of the live demo.
+
 ## Current update
 
 - Rechecked README and backend/pathsnap/api.py from commit bd65b8a.

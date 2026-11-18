@@ -23,6 +23,6 @@ GPS rows have the order `[longitude, latitude, timestamp]`. Route coordinates us
 
 ## Two-laptop demo
 
-Set `PATHSNAP_PARTITION=evaluator_test` and point `PATHSNAP_DATA` to the provided evaluation data. The current loader expects a folder structured as `evaluator_test/<trip_id>/<trip_id>.<extension>` inside the data root, or the same structure in a ZIP with an optional `Student folder/` prefix. Each trip needs the four documented files. The evaluator package has yet to be inspected, so its directory layout may need to be adapted once supplied.
+On demo day, set `PATHSNAP_PARTITION=evaluator_test` and point `PATHSNAP_DATA` directly to the supplied `evaluator_test.zip`. The ZIP layout has been verified and the loader discovers all ten reserved trip IDs without extraction. Keep the ZIP on the backend laptop and use the final `artifacts/model.joblib`.
 
 Run Uvicorn with `--host 0.0.0.0` on the demo LAN. Use laptop 1's LAN IP and port `8000` as the UI's API base URL. Set `PATHSNAP_UI_ORIGINS` on laptop 1 to the browser page's full origin, including scheme and port. Allow inbound TCP 8000 on the demo network if Windows Firewall blocks the connection. Verify `GET /health` from laptop 2 and capture the backend logs during the evaluation.
