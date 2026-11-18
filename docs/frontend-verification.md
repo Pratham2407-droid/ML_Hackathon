@@ -1,37 +1,35 @@
-# Verification — 18 November 2026
+# Frontend verification — 18 November 2026
 
-- Read original README.md, pathsnap/api.py and route_geometry before integration.
-- Backend and model files preserved byte-for-byte; frontend added in its own folder.
-- Production Vite 6.4.4 build passed under Node 24.14.1.
-- Network DNS was unavailable for npm downloads. Build dependencies were recovered
-  from the existing local npm tarball cache. A normal npm install is documented
-  for machines with network access.
-- No API was listening at http://127.0.0.1:8000/health. No backend LAN address was
-  supplied. Python in this workspace lacks FastAPI. The original student dataset
-  exists on this laptop, but live inference has not been run.
-- Browser test could not execute: starting Vite on 127.0.0.1:5173 failed
-  with listen EPERM due to workspace restrictions. No browser test passed.
-  The supplied test uses controlled contract-shaped API responses plus a Leaflet
-  method spy. It checks string IDs, bodyless POST, loading/duplicate prevention,
-  metric formatting, coordinate inversion, separate segments, cleared results,
-  switching trips and bounds, failed prediction/retry, and a refused API connection.
-  This does not establish real Leaflet rendering or live model correctness.
+## Current update
 
-## Checks still requiring the two laptops
+- Rechecked README and backend/pathsnap/api.py from commit bd65b8a.
+- Backend and training files are unchanged.
+- Dark responsive dashboard with keyboard focus and reduced-motion support.
+- Leaflet 1.9.4 is bundled locally; only basemap tiles need internet.
+- Production build passed under Node 24.22.3.
+- All five Chromium browser tests passed (Playwright 1.56.1). Desktop and
+  390px mobile screenshots were inspected for layout and overflow.
+- Browser tests use real Leaflet with controlled API responses. They check
+  leading-zero string IDs, bodyless POST, disabled duplicate submission, separate
+  route segments, longitude/latitude conversion, fit bounds across trip changes,
+  both layer toggles, metric formatting, clearing, failure/retry, changed backend
+  addresses, invalid JSON, invalid geometry/metrics, wrong trip responses,
+  empty lists and mobile overflow.
+- These browser checks are not live inference. No model, reference labels or
+  saved predictions were added to the frontend.
 
-1. Start the unchanged backend with the student partition, correct dataset/model,
-   LAN binding 0.0.0.0, allowed UI origin, and Windows firewall access.
-2. From the UI laptop use the backend LAN IP; confirm browser GET /health and
-   /trips succeed with CORS and all returned IDs appear with leading zeros.
-3. Run a real prediction; inspect API logs for one bodyless POST, verify displayed
-   accuracy, seconds and count against its response.
-4. With internet access, verify real Leaflet route/GPS layers, gaps, coordinate
-   location, fit bounds and both layer toggles.
-5. Switch to another live trip; verify the prior geometry and metrics clear,
-   new metrics and bounds update, then switch back.
-6. Stop the backend or use a closed port; verify clear connection failure,
-   restore it, reconnect and retry a prediction.
-7. On demo day repeat against evaluator_test with the full model and reserved
-   data. There is no frontend ID restriction or partition-dependent behavior.
-8. After these pass, capture the completed **live** results screen for the report.
-   No live-results screenshot has been produced.
+## Remaining live two-laptop checks
+
+1. Start FastAPI with the appropriate data/model/partition, binding 0.0.0.0:8000.
+2. Set PATHSNAP_UI_ORIGINS to the actual UI browser origin and permit the backend
+   port through the Windows private-network firewall.
+3. From the UI laptop, verify health, all trip IDs, and a successful prediction
+   using the backend LAN address.
+4. Compare displayed metrics and geometry with the live response, switch trips,
+   and test backend disconnection/reconnection and prediction retry.
+5. Repeat against the reserved evaluator partition and full trained model.
+6. Capture the live completed results screen and successful API response for the
+   technical report after the LAN checks pass.
+
+Screenshots from controlled browser tests are internal layout checks, not
+live-results evidence.

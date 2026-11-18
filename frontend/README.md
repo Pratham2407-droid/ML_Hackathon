@@ -54,12 +54,17 @@ npm test
 ```
 
 Preview also uses port 5173, so stop the dev server first.
-Leaflet 1.9.4 JS/CSS loads from unpkg.com; basemap tiles load from
-tile.openstreetmap.org and an optional font loads from Google Fonts.
-Internet access is needed for a fresh map-library load and basemap; this is
-separate from LAN API access. If tiles fail, loaded Leaflet still draws trip
-geometry. If the library fails, metrics remain usable and the map explains
-the failure. Install/build does not download Leaflet.
+Leaflet 1.9.4 JS/CSS is installed with npm and bundled into the production
+build. Once dependencies are installed, the UI and trip geometry work without
+internet access. Only OpenStreetMap basemap tiles need internet; a warning
+appears if tiles cannot load, while route and GPS layers remain interactive.
+The UI uses system fonts and has no external font dependency.
+
+The dark theme supports keyboard focus, reduced motion and mobile layouts.
+Editing the backend URL immediately clears old results and disables prediction
+until you reconnect. Invalid JSON, malformed predictions and invalid coordinates
+are rejected without showing partial metrics or route geometry. Failed
+predictions can be retried manually; POST requests are never retried automatically.
 
 No reference geometry, ground-truth labels, dataset, or trained predictions are
 bundled in the frontend. Route segments are separate blue polylines and GPS
