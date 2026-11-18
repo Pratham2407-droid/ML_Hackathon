@@ -21,7 +21,7 @@ precedence; use the URL field to change it.
 
 ## Windows backend laptop
 
-Keep the original backend README's model, data and partition settings. In the
+Follow the [backend setup guide](../docs/backend.md) for the working directory, model, data, and partition. In the
 same PowerShell window, use these settings before starting Uvicorn:
 
 ```powershell
@@ -65,4 +65,4 @@ No reference geometry, ground-truth labels, dataset, or trained predictions are
 bundled in the frontend. Route segments are separate blue polylines and GPS
 observations are orange points. Checkbox layers and Fit trip work independently.
 
-See VERIFICATION.md for evidence and remaining live checks.
+See the [verification notes](../docs/frontend-verification.md) for evidence and remaining live checks.
